@@ -107,5 +107,15 @@
   </div>
 
   <script src="app.js"></script>
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker.register("./sw.js").catch(function (err) {
+          console.warn("SW register failed", err);
+        });
+      });
+    }
+  </script>
 </body>
 </html>
