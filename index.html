@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#8b1a1a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="精舍通告" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <title>善玄精舍 — 儀式通告編輯</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="lunar.js"></script>
+</head>
+<body>
+  <header class="app-header no-print">
+    <h1>善玄精舍 <span class="sub">儀式通告編輯</span></h1>
+    <div class="btn-row">
+      <button type="button" id="btn-load-sample" class="ghost">載入樣本</button>
+      <button type="button" id="btn-export" class="primary">匯出 PDF</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- ===== Editor ===== -->
+    <aside class="editor no-print" aria-label="編輯區">
+      <h2>通告內容</h2>
+
+      <div class="field">
+        <label for="f-title">通告標題</label>
+        <input type="text" id="f-title" placeholder="例如：三師寶誕" />
+      </div>
+
+      <div class="field">
+        <label for="f-pick-date">揀日期</label>
+        <input type="date" id="f-pick-date" />
+        <p class="hint">選擇後自動填入公曆、星期、農曆（仍可手動改）</p>
+      </div>
+
+      <div class="field">
+        <label for="f-lunar">農曆日期</label>
+        <input type="text" id="f-lunar" placeholder="例如：癸卯年四月十八日" />
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="f-solar">公曆日期</label>
+          <input type="text" id="f-solar" placeholder="例如：2023年6月5日" />
+        </div>
+        <div class="field">
+          <label for="f-weekday">星期</label>
+          <input type="text" id="f-weekday" placeholder="例如：星期一" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-time">時間</label>
+        <input type="text" id="f-time" placeholder="例如：晚上八時" />
+      </div>
+
+      <div class="field">
+        <label for="f-address">地址／電話</label>
+        <textarea id="f-address" rows="2"></textarea>
+      </div>
+
+      <h3>工作人員名單</h3>
+      <p class="hint" style="margin-top:-4px;margin-bottom:8px">
+        1–13 項崗位固定，只需填寫／更改姓名。記錄生可用「、」分隔多人；後備、公關各有兩個名額。
+      </p>
+      <div id="staff-list" class="staff-list"></div>
+
+      <h3>頁尾備註</h3>
+      <div class="field">
+        <label for="f-footer">紅色備註文字</label>
+        <input type="text" id="f-footer" />
+      </div>
+    </aside>
+
+    <!-- ===== Live preview ===== -->
+    <section class="preview-wrap" aria-label="預覽">
+      <div class="preview-label no-print">即時預覽（A4）— 按「匯出 PDF」後於列印視窗選擇「另存為 PDF」</div>
+      <div class="preview-frame">
+        <article class="notice-page" id="notice-page">
+          <header class="notice-header">
+            <img class="logo" src="img-000.png" alt="善玄精舍" />
+            <div class="contact" id="p-contact"></div>
+          </header>
+
+          <div class="notice-title-wrap">
+            <h1 class="notice-title" id="p-title"></h1>
+          </div>
+
+          <div class="notice-date" id="p-date">
+            <span class="date-lunar" id="p-date-lunar"></span>
+            <span class="date-right" id="p-date-right"></span>
+          </div>
+
+          <table class="staff-table" aria-label="工作人員">
+            <tbody id="p-staff"></tbody>
+          </table>
+
+          <p class="notice-footer" id="p-footer"></p>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
