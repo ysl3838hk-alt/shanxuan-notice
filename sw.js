@@ -1,5 +1,5 @@
 /* 善玄精舍通告編輯 — offline cache */
-const CACHE = "shanxuan-notice-v3";
+const CACHE = "shanxuan-notice-v4";
 const ASSETS = [
   "./",
   "./index.html",
@@ -12,6 +12,8 @@ const ASSETS = [
   "./icon-192.png",
   "./icon-512.png",
   "./fonts/TW-Kai-98_1.ttf",
+  "./vendor/html2canvas.min.js",
+  "./vendor/jspdf.umd.min.js",
 ];
 
 self.addEventListener("install", (event) => {

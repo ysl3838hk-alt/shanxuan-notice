@@ -299,87 +299,125 @@
     const page = document.getElementById("notice-page");
     if (!page) return;
 
-    const title = suggestedFilename().replace(/\.pdf$/i, "");
-    const base = new URL("./", window.location.href).href;
-    const clone = page.cloneNode(true);
-    const logo = clone.querySelector(".logo");
-    if (logo && logo.getAttribute("src")) {
-      logo.setAttribute("src", new URL(logo.getAttribute("src"), base).href);
+    const filename = suggestedFilename();
+    const btn = document.getElementById("btn-export");
+    const prevLabel = btn ? btn.textContent : "";
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "產生 PDF…";
     }
 
-    const prevIframe = document.getElementById("print-frame");
-    if (prevIframe) prevIframe.remove();
-
-    const iframe = document.createElement("iframe");
-    iframe.id = "print-frame";
-    iframe.setAttribute("aria-hidden", "true");
-    iframe.style.cssText =
-      "position:fixed;left:0;top:0;width:210mm;height:297mm;border:0;opacity:0;pointer-events:none;z-index:-1";
-    document.body.appendChild(iframe);
-
-    const doc = iframe.contentDocument || iframe.contentWindow.document;
-    doc.open();
-    doc.write(
-      "<!DOCTYPE html><html lang=\"zh-HK\"><head>" +
-        '<meta charset="UTF-8" />' +
-        "<title>" +
-        title.replace(/</g, "") +
-        "</title>" +
-        '<base href="' +
-        base +
-        '" />' +
-        '<link rel="stylesheet" href="styles.css" />' +
-        "<style>" +
-        "@page{size:A4 portrait;margin:0}" +
-        "html,body{margin:0!important;padding:0!important;width:210mm;height:297mm;overflow:hidden!important;background:#fff}" +
-        "body{-webkit-print-color-adjust:exact;print-color-adjust:exact}" +
-        "@media print{html{zoom:0.92}}" +
-        ".notice-page{width:210mm!important;height:297mm!important;max-height:297mm!important;min-height:0!important;" +
-        "margin:0!important;box-shadow:none!important;transform:none!important;overflow:hidden!important;" +
-        "page-break-after:avoid;page-break-inside:avoid;break-after:avoid;break-inside:avoid}" +
-        ".staff-table tr.staff-row-main{height:14.2mm}" +
-        ".staff-table tr.staff-row-main.has-slots{height:auto;min-height:14.2mm}" +
-        ".notice-header{margin-bottom:6.5mm}" +
-        ".notice-title-wrap{margin-bottom:5mm}" +
-        ".notice-date{margin-bottom:3.5mm}" +
-        ".notice-footer{margin-top:2.5mm}" +
-        "</style></head><body></body></html>"
-    );
-    doc.close();
-    doc.body.appendChild(clone);
-
-    const win = iframe.contentWindow;
-    const doPrint = function () {
-      try {
-        win.focus();
-        win.print();
-      } finally {
-        setTimeout(function () {
-          if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
-        }, 1500);
+    const finish = function () {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = prevLabel || "匯出 PDF";
       }
     };
 
-    const imgs = Array.from(doc.images || []);
-    const waitImg = Promise.all(
-      imgs.map(function (img) {
-        return img.complete
-          ? Promise.resolve()
-          : new Promise(function (r) {
-              img.onload = img.onerror = function () {
-                r();
-              };
-            });
-      })
-    );
-    const waitFont =
-      doc.fonts && doc.fonts.ready
-        ? doc.fonts.ready.catch(function () {})
-        : Promise.resolve();
+    // Capture a full-size off-screen clone (ignore mobile preview scale)
+    const host = document.createElement("div");
+    host.style.cssText =
+      "position:fixed;left:-12000px;top:0;width:210mm;background:#fff;z-index:-1;pointer-events:none;";
+    const clone = page.cloneNode(true);
+    clone.style.cssText =
+      "width:210mm;min-height:297mm;height:auto;margin:0;transform:none;box-shadow:none;overflow:visible;";
+    host.appendChild(clone);
+    document.body.appendChild(host);
 
-    Promise.all([waitImg, waitFont]).then(function () {
-      setTimeout(doPrint, 250);
-    });
+    const h2c = window.html2canvas;
+    const jspdfNS = window.jspdf;
+    if (!h2c || !jspdfNS || !jspdfNS.jsPDF) {
+      alert("PDF 元件未載入，請有網絡時重新整理頁面再試。");
+      host.remove();
+      finish();
+      return;
+    }
+
+    h2c(clone, {
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: "#ffffff",
+      logging: false,
+      width: clone.offsetWidth,
+      height: clone.offsetHeight,
+      windowWidth: clone.offsetWidth,
+      windowHeight: clone.offsetHeight,
+    })
+      .then(function (canvas) {
+        host.remove();
+        const JsPDF = jspdfNS.jsPDF;
+        const pdf = new JsPDF({
+          orientation: "portrait",
+          unit: "mm",
+          format: "a4",
+          compress: true,
+        });
+        const pageW = 210;
+        const pageH = 297;
+        const imgData = canvas.toDataURL("image/jpeg", 0.92);
+        let w = pageW;
+        let h = (canvas.height * pageW) / canvas.width;
+        if (h > pageH) {
+          h = pageH;
+          w = (canvas.width * pageH) / canvas.height;
+        }
+        const x = (pageW - w) / 2;
+        const y = 0;
+        pdf.addImage(imgData, "JPEG", x, y, w, h, undefined, "FAST");
+
+        const blob = pdf.output("blob");
+        const file = new File([blob], filename, { type: "application/pdf" });
+
+        const tryShare = function () {
+          if (
+            navigator.canShare &&
+            navigator.canShare({ files: [file] })
+          ) {
+            return navigator.share({ files: [file], title: filename }).then(
+              function () {
+                return true;
+              },
+              function () {
+                return false;
+              }
+            );
+          }
+          return Promise.resolve(false);
+        };
+
+        return tryShare().then(function (shared) {
+          if (shared) return;
+          // Fallback: download / open
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = filename;
+          a.rel = "noopener";
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          // iOS Safari often ignores download — open PDF in new tab as backup
+          setTimeout(function () {
+            try {
+              const opened = window.open(url, "_blank");
+              if (!opened) {
+                // last resort: navigate
+                window.location.href = url;
+              }
+            } catch (e) {}
+            setTimeout(function () {
+              URL.revokeObjectURL(url);
+            }, 60000);
+          }, 400);
+        });
+      })
+      .catch(function (err) {
+        console.error(err);
+        host.remove();
+        alert("產生 PDF 失敗，請再試一次。");
+      })
+      .finally(finish);
   }
 
 
