@@ -295,13 +295,93 @@
     readFormBasics();
     syncStaffFromDom();
     updatePreview();
-    const prev = document.title;
-    document.title = suggestedFilename().replace(/\.pdf$/i, "");
-    window.print();
-    setTimeout(() => {
-      document.title = prev;
-    }, 500);
+
+    const page = document.getElementById("notice-page");
+    if (!page) return;
+
+    const title = suggestedFilename().replace(/\.pdf$/i, "");
+    const base = new URL("./", window.location.href).href;
+    const clone = page.cloneNode(true);
+    const logo = clone.querySelector(".logo");
+    if (logo && logo.getAttribute("src")) {
+      logo.setAttribute("src", new URL(logo.getAttribute("src"), base).href);
+    }
+
+    const prevIframe = document.getElementById("print-frame");
+    if (prevIframe) prevIframe.remove();
+
+    const iframe = document.createElement("iframe");
+    iframe.id = "print-frame";
+    iframe.setAttribute("aria-hidden", "true");
+    iframe.style.cssText =
+      "position:fixed;left:0;top:0;width:210mm;height:297mm;border:0;opacity:0;pointer-events:none;z-index:-1";
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentDocument || iframe.contentWindow.document;
+    doc.open();
+    doc.write(
+      "<!DOCTYPE html><html lang=\"zh-HK\"><head>" +
+        '<meta charset="UTF-8" />' +
+        "<title>" +
+        title.replace(/</g, "") +
+        "</title>" +
+        '<base href="' +
+        base +
+        '" />' +
+        '<link rel="stylesheet" href="styles.css" />' +
+        "<style>" +
+        "@page{size:A4 portrait;margin:0}" +
+        "html,body{margin:0!important;padding:0!important;width:210mm;height:297mm;overflow:hidden!important;background:#fff}" +
+        "body{-webkit-print-color-adjust:exact;print-color-adjust:exact}" +
+        "@media print{html{zoom:0.92}}" +
+        ".notice-page{width:210mm!important;height:297mm!important;max-height:297mm!important;min-height:0!important;" +
+        "margin:0!important;box-shadow:none!important;transform:none!important;overflow:hidden!important;" +
+        "page-break-after:avoid;page-break-inside:avoid;break-after:avoid;break-inside:avoid}" +
+        ".staff-table tr.staff-row-main{height:14.2mm}" +
+        ".staff-table tr.staff-row-main.has-slots{height:auto;min-height:14.2mm}" +
+        ".notice-header{margin-bottom:6.5mm}" +
+        ".notice-title-wrap{margin-bottom:5mm}" +
+        ".notice-date{margin-bottom:3.5mm}" +
+        ".notice-footer{margin-top:2.5mm}" +
+        "</style></head><body></body></html>"
+    );
+    doc.close();
+    doc.body.appendChild(clone);
+
+    const win = iframe.contentWindow;
+    const doPrint = function () {
+      try {
+        win.focus();
+        win.print();
+      } finally {
+        setTimeout(function () {
+          if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+        }, 1500);
+      }
+    };
+
+    const imgs = Array.from(doc.images || []);
+    const waitImg = Promise.all(
+      imgs.map(function (img) {
+        return img.complete
+          ? Promise.resolve()
+          : new Promise(function (r) {
+              img.onload = img.onerror = function () {
+                r();
+              };
+            });
+      })
+    );
+    const waitFont =
+      doc.fonts && doc.fonts.ready
+        ? doc.fonts.ready.catch(function () {})
+        : Promise.resolve();
+
+    Promise.all([waitImg, waitFont]).then(function () {
+      setTimeout(doPrint, 250);
+    });
   }
+
 
   function init() {
     state = cloneSample();

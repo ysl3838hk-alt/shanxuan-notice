@@ -499,6 +499,9 @@ button.danger-ghost:hover { background: #fff5f5; }
 }
 
 @media print {
+  html {
+    zoom: 0.92;
+  }
   html, body {
     background: #fff !important;
     margin: 0 !important;
