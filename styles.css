@@ -492,7 +492,7 @@ button.danger-ghost:hover { background: #fff5f5; }
   }
 }
 
-/* ===== Print ===== */
+/* ===== Print — force single A4 page, no blank page 2 ===== */
 @page {
   size: A4 portrait;
   margin: 0;
@@ -503,6 +503,9 @@ button.danger-ghost:hover { background: #fff5f5; }
     background: #fff !important;
     margin: 0 !important;
     padding: 0 !important;
+    width: 210mm;
+    height: 297mm;
+    overflow: hidden !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
@@ -514,39 +517,66 @@ button.danger-ghost:hover { background: #fff5f5; }
     padding: 0;
     max-width: none;
     margin: 0;
+    width: 210mm;
+    height: 297mm;
+    overflow: hidden;
   }
 
-  .preview-wrap { align-items: stretch; }
+  .preview-wrap {
+    align-items: stretch;
+    margin: 0;
+    padding: 0;
+    width: 210mm;
+    height: 297mm;
+    overflow: hidden;
+  }
   .preview-frame {
     background: none;
     padding: 0;
     border-radius: 0;
-    overflow: visible;
+    overflow: hidden;
     display: block;
+    width: 210mm;
+    height: 297mm;
   }
 
   .notice-page {
     width: 210mm;
-    min-height: auto;
-    height: auto;
+    height: 297mm;
+    max-height: 297mm;
+    min-height: 0 !important;
     margin: 0 !important;
-    padding: var(--page-pad-t) var(--page-pad-r) 8mm var(--page-pad-l);
+    padding: var(--page-pad-t) var(--page-pad-r) 6mm var(--page-pad-l);
     box-shadow: none;
     transform: none !important;
-    overflow: visible;
+    overflow: hidden !important;
+    page-break-after: avoid;
+    page-break-inside: avoid;
+    break-after: avoid;
+    break-inside: avoid;
   }
 
+  /* Slightly tighter rows so 13 posts + slots fit one page */
   .staff-table tr.staff-row-main {
+    height: 14.6mm;
     break-inside: avoid;
     page-break-inside: avoid;
   }
+  .staff-table tr.staff-row-main.has-slots {
+    height: auto;
+    min-height: 14.6mm;
+  }
+
+  .notice-header { margin-bottom: 7mm; }
+  .notice-title-wrap { margin-bottom: 5.5mm; }
+  .notice-date { margin-bottom: 4mm; }
 
   .notice-footer {
     break-before: avoid;
     page-break-before: avoid;
     break-inside: avoid;
     page-break-inside: avoid;
-    margin-top: 4mm;
+    margin-top: 3mm;
   }
 }
 
