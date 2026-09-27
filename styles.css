@@ -318,7 +318,7 @@ position: relative;
   white-space: nowrap !important;
   overflow: visible;
   position: absolute;
-  left: calc((100% - 6 * 27.7pt) / 2);
+  left: 0; /* JS syncContactAlign sets to title 穆 */
   bottom: 1.5mm;
   margin: 0;
   padding: 0;

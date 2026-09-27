@@ -377,6 +377,7 @@
     const footer = state.footer || "";
     const body = footer.startsWith("*") ? footer.slice(1) : footer;
     $("#p-footer").innerHTML = `<span class="star">*</span>${escapeHtml(body)}`;
+    syncContactAlign();
   }
 
   function formatNameCell(row) {
@@ -414,6 +415,23 @@
     const title = (state.title || "通告").replace(/[\\/:*?"<>|]/g, "_");
     const solar = (state.solarDate || "").replace(/[\\/:*?"<>|]/g, "_");
     return solar ? `${title}_${solar}.pdf` : `${title}.pdf`;
+  }
+
+
+  function syncContactAlign() {
+    const title = document.getElementById("p-title");
+    const contact = document.getElementById("p-contact");
+    const header = document.querySelector(".notice-header");
+    if (!title || !contact || !header) return;
+    // measure after layout
+    requestAnimationFrame(function () {
+      const tr = title.getBoundingClientRect();
+      const hr = header.getBoundingClientRect();
+      if (!tr.width || !hr.width) return;
+      const leftPx = tr.left - hr.left;
+      contact.style.left = Math.max(0, leftPx) + "px";
+      contact.style.right = "auto";
+    });
   }
 
   function exportPdf() {
