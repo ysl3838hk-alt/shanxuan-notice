@@ -310,10 +310,10 @@ button.danger-ghost:hover { background: #fff5f5; }
 }
 
 .notice-header .contact {
-  /* 標楷體 ~12pt; full address + 電話 must show (nowrap) */
+  /* 標楷體 10.5pt bold; keep full address + 電話 on one line in PDF */
   font-family: var(--kai);
-  font-size: 12pt;
-  font-weight: 400;
+  font-size: 10.5pt;
+  font-weight: 700;
   line-height: 1.2;
   color: #111;
   flex: 1 1 auto;
