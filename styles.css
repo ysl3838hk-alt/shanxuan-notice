@@ -296,7 +296,7 @@ button.danger-ghost:hover { background: #fff5f5; }
   margin-bottom: 8.5mm;
   /* pull logo toward sample left (5.78mm) vs content pad 11.57mm */
   margin-left: calc(5.78mm - var(--page-pad-l));
-position: relative;
+  position: relative;
 }
 
 .notice-header .logo {
@@ -309,22 +309,24 @@ position: relative;
   flex-shrink: 0;
   display: block;
   transform: scaleX(1.14);
-  transform-orig.notice-header .contact {
+  transform-origin: left bottom;
+  margin-left: 4%; /* 標誌向右移4% */
+}
+
+.notice-header .contact {
   font-family: var(--kai);
-  font-size: 7.7pt;
+  font-size: 7.7pt; /* JS may shrink slightly toward ~7pt so full line fits */
   font-weight: 700;
   line-height: 1.15;
   color: #111;
   white-space: nowrap !important;
   overflow: visible;
   position: absolute;
-  left: 0; /* JS syncContactAlign sets to title 穆 */
+  left: 0; /* JS syncContactAlign: align with title first char 穆 */
   bottom: 1.5mm;
   margin: 0;
   padding: 0;
   -webkit-text-stroke: 0.25px #000;
-  margin-left: 4%;
-}: 4em; /* 兩個字距離 */
 }
 
 .fixed-contact {
