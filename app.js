@@ -346,8 +346,6 @@
     if ($("#staff-list") && $("#staff-list").children.length) {
       syncStaffFromDom();
     }
-
-    $("#p-contact").textContent = FIXED_CONTACT;
     $("#p-title").textContent = state.title || "　";
 
     $("#p-date-lunar").textContent = state.lunarDate || "";
@@ -377,7 +375,6 @@
     const footer = state.footer || "";
     const body = footer.startsWith("*") ? footer.slice(1) : footer;
     $("#p-footer").innerHTML = `<span class="star">*</span>${escapeHtml(body)}`;
-    syncContactAlign();
   }
 
   function formatNameCell(row) {
@@ -418,43 +415,6 @@
   }
 
 
-  function syncContactAlign(root) {
-    const page =
-      root && root.classList && root.classList.contains("notice-page")
-        ? root
-        : (root && root.querySelector && root.querySelector(".notice-page")) ||
-          document.getElementById("notice-page");
-    if (!page) return;
-    const tEl = page.querySelector(".notice-title");
-    const cEl = page.querySelector(".contact");
-    const header = page.querySelector(".notice-header");
-    if (!tEl || !cEl || !header) return;
-    // offset* ignores ancestor CSS transforms — preview scale won't skew PDF/preview differently
-    let titleLeft = 0;
-    let el = tEl;
-    while (el && el !== page) {
-      titleLeft += el.offsetLeft;
-      el = el.offsetParent;
-    }
-    // title is inside .notice-title-wrap which is block; offsetLeft of title may be centered via text-align
-    // For inline-block title, offsetLeft is correct relative to wrap; need wrap's offset too
-    const wrap = tEl.parentElement;
-    let left = 0;
-    el = tEl;
-    while (el && el !== header && el !== page) {
-      left += el.offsetLeft;
-      el = el.offsetParent === page || !el.offsetParent ? null : el.offsetParent;
-      if (!el) break;
-    }
-    // Fallback: compute from title wrap text-align center
-    const pageStyle = window.getComputedStyle(page);
-    const padL = parseFloat(pageStyle.paddingLeft) || 0;
-    const contentW = page.clientWidth - padL - (parseFloat(pageStyle.paddingRight) || 0);
-    const titleW = tEl.offsetWidth;
-    const titleLeftInContent = (contentW - titleW) / 2;
-    // contact is inside header; header is full content width; absolute left relative to header
-    cEl.style.left = Math.max(0, titleLeftInContent) + "px";
-  }
 
   function exportPdf() {
     readFormBasics();
@@ -489,8 +449,7 @@
       "width:210mm;min-height:297mm;height:auto;margin:0;transform:none;box-shadow:none;overflow:visible;";
     host.appendChild(clone);
     document.body.appendChild(host);
-    syncContactAlign(clone);
-    syncContactAlign(clone);
+
 
     const h2c = window.html2canvas;
     const jspdfNS = window.jspdf;

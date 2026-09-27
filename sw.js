@@ -1,5 +1,5 @@
 /* 善玄精舍通告編輯 — offline cache */
-const CACHE = "shanxuan-notice-v29";
+const CACHE = "shanxuan-notice-v30";
 const ASSETS = [
   "./",
   "./index.html",
