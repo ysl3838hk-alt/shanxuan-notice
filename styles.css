@@ -296,6 +296,7 @@ button.danger-ghost:hover { background: #fff5f5; }
   margin-bottom: 8.5mm;
   /* pull logo toward sample left (5.78mm) vs content pad 11.57mm */
   margin-left: calc(5.78mm - var(--page-pad-l));
+position: relative;
 }
 
 .notice-header .logo {
@@ -308,25 +309,21 @@ button.danger-ghost:hover { background: #fff5f5; }
   flex-shrink: 0;
   display: block;
   transform: scaleX(1.14);
-  transform-origin: left bottom;
-}
-
-.notice-header .contact {
+  transform-orig.notice-header .contact {
   font-family: var(--kai);
   font-size: 7.7pt;
   font-weight: 700;
   line-height: 1.15;
   color: #111;
-  flex: 1 1 auto;
-  min-width: 0;
   white-space: nowrap !important;
   overflow: visible;
-  align-self: flex-end;
-  margin-top: auto;
-  padding-top: 0;
-  margin-bottom: 1.5mm;
+  position: absolute;
+  left: calc((100% - 6 * 27.7pt) / 2);
+  bottom: 1.5mm;
+  margin: 0;
+  padding: 0;
   -webkit-text-stroke: 0.25px #000;
-  margin-left: 4em; /* 兩個字距離 */
+}: 4em; /* 兩個字距離 */
 }
 
 .fixed-contact {
