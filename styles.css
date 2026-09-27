@@ -290,11 +290,10 @@ button.danger-ghost:hover { background: #fff5f5; }
 
 .notice-header {
   display: flex;
-  align-items: flex-end; /* sample: contact baseline with logo/calligraphy bottom */
-  gap: 0;
-  /* logo bottom ~107pt, title top ~133pt → ~9mm gap after header */
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 4mm;
   margin-bottom: 8.5mm;
-  /* pull logo toward sample left (5.78mm) vs content pad 11.57mm */
   margin-left: calc(5.78mm - var(--page-pad-l));
   position: relative;
 }
@@ -302,7 +301,7 @@ button.danger-ghost:hover { background: #fff5f5; }
 .notice-header .logo {
   height: 17mm;
   width: auto;
-  max-width: 44mm; /* room for full Kai contact+phone one line */
+  max-width: 55mm;
   object-position: left bottom;
   background: transparent;
   object-fit: contain;
@@ -310,23 +309,25 @@ button.danger-ghost:hover { background: #fff5f5; }
   display: block;
   transform: scaleX(1.14);
   transform-origin: left bottom;
-  margin-left: 4%; /* 標誌向右移4% */
+  margin-left: 4%;
 }
 
 .notice-header .contact {
   font-family: var(--kai);
-  font-size: 7.7pt; /* JS may shrink slightly toward ~7pt so full line fits */
+  font-size: 8pt;
   font-weight: 700;
-  line-height: 1.15;
+  line-height: 1.2;
   color: #111;
-  white-space: nowrap !important;
+  white-space: nowrap;
   overflow: visible;
-  position: absolute;
-  left: 0; /* JS syncContactAlign: align with title first char 穆 */
-  bottom: 1.5mm;
-  margin: 0;
+  flex: 0 1 auto;
+  text-align: right;
+  margin: 0 0 1mm 0;
   padding: 0;
-  -webkit-text-stroke: 0.25px #000;
+  position: static;
+  left: auto;
+  max-width: 58%;
+  -webkit-text-stroke: 0.2px #000;
 }
 
 .fixed-contact {

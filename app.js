@@ -346,7 +346,7 @@
     if ($("#staff-list") && $("#staff-list").children.length) {
       syncStaffFromDom();
     }
-    $("#p-contact").textContent = FIXED_CONTACT;
+    if ($("#p-contact")) $("#p-contact").textContent = FIXED_CONTACT;
     $("#p-title").textContent = state.title || "　";
 
     $("#p-date-lunar").textContent = state.lunarDate || "";
@@ -376,7 +376,6 @@
     const footer = state.footer || "";
     const body = footer.startsWith("*") ? footer.slice(1) : footer;
     $("#p-footer").innerHTML = `<span class="star">*</span>${escapeHtml(body)}`;
-    syncContactAlign();
   }
 
   function formatNameCell(row) {
@@ -420,56 +419,6 @@
 
 
   /** Align contact left with title first char using offset* (ignores preview CSS scale). */
-  function syncContactAlign(root) {
-    const page =
-      root && root.classList && root.classList.contains("notice-page")
-        ? root
-        : (root && root.querySelector && root.querySelector(".notice-page")) ||
-          document.getElementById("notice-page");
-    if (!page) return;
-    const tEl = page.querySelector(".notice-title");
-    const cEl = page.querySelector(".contact");
-    const header = page.querySelector(".notice-header");
-    if (!tEl || !cEl || !header) return;
-
-    function offsetLeftTo(el, ancestor) {
-      let x = 0;
-      let n = el;
-      while (n && n !== ancestor) {
-        x += n.offsetLeft;
-        const op = n.offsetParent;
-        if (!op || op === ancestor) break;
-        if (!ancestor.contains(op)) break;
-        n = op;
-      }
-      return x;
-    }
-
-    // Force layout; offset* ignores ancestor transforms (preview scale)
-    void page.offsetWidth;
-    const titleLeft = offsetLeftTo(tEl, page);
-    const headerLeft = offsetLeftTo(header, page);
-    let left = Math.max(0, titleLeft - headerLeft);
-    cEl.style.left = left + "px";
-    cEl.style.right = "auto";
-
-    // Fit full address+phone on one line from 穆 to right pad; Kai ~7.7–9pt
-    const pageStyle = window.getComputedStyle(page);
-    const padR = parseFloat(pageStyle.paddingRight) || 0;
-    // right edge of usable area relative to header
-    const pageContentRight = page.clientWidth - padR;
-    const avail = Math.max(20, pageContentRight - titleLeft - 1);
-    let size = 9;
-    cEl.style.fontSize = size + "pt";
-    // shrink until fits or hits ~7.0pt floor
-    while (size > 7.0 && cEl.scrollWidth > avail) {
-      size -= 0.1;
-      cEl.style.fontSize = size.toFixed(1) + "pt";
-    }
-    if (size > 7.7 && cEl.scrollWidth <= avail) {
-      // prefer 7.7–9; keep current if already fits at higher size
-    }
-  }
 
   function exportPdf() {
     readFormBasics();
@@ -505,7 +454,6 @@
     host.appendChild(clone);
     document.body.appendChild(host);
     // sync on export clone (full-size, no preview scale) before capture
-    syncContactAlign(clone);
 
     const h2c = window.html2canvas;
     const jspdfNS = window.jspdf;
