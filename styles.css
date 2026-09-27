@@ -333,9 +333,12 @@ button.danger-ghost:hover { background: #fff5f5; }
 
 .notice-title {
   text-align: center;
-  font-family: var(--kai);
-  font-size: 25.2pt;
-  font-weight: normal;
+  font-family: "Arial Black", "Helvetica Neue", "Noto Sans CJK TC",
+               "Microsoft JhengHei", "PingFang TC", "Source Han Sans TC",
+               sans-serif;
+  font-size: 31pt;
+  font-weight: 900;
+  color: #000;
   letter-spacing: 0;
   line-height: 1.05;
   margin: 0;
