@@ -5,6 +5,9 @@
   "use strict";
 
   /** Default SAMPLE matches sample-v2.pdf for side-by-side verification */
+  const FIXED_CONTACT =
+    "香港灣仔駱克道348-350號恒發商業大廈3字樓 電話: 2528 3368";
+
   const SAMPLE = {
     title: "三師寶誕",
     lunarDate: "癸卯年四月十八日",
@@ -12,7 +15,7 @@
     weekday: "星期一",
     time: "晚上八時",
     pickDate: "2023-06-05",
-    address: "香港灣仔駱克道348-350號恒發商業大廈3字樓 電話: 2528 3368",
+    address: FIXED_CONTACT,
     footer: "*工作人員必須於儀式開始前30分鐘到達預備",
     staff: [
       { role: "主禮生", type: "single", names: "杜緣義" },
@@ -122,7 +125,6 @@
     $("#f-solar").value = state.solarDate;
     $("#f-weekday").value = state.weekday;
     $("#f-time").value = state.time;
-    $("#f-address").value = state.address;
     $("#f-footer").value = state.footer;
     if ($("#f-pick-date")) {
       $("#f-pick-date").value = state.pickDate || "";
@@ -136,7 +138,7 @@
     state.solarDate = $("#f-solar").value.trim();
     state.weekday = $("#f-weekday").value.trim();
     state.time = $("#f-time").value.trim();
-    state.address = $("#f-address").value.trim();
+    state.address = FIXED_CONTACT;
     state.footer = $("#f-footer").value.trim();
     if ($("#f-pick-date")) {
       state.pickDate = $("#f-pick-date").value || "";
@@ -223,7 +225,7 @@
       syncStaffFromDom();
     }
 
-    $("#p-contact").textContent = state.address;
+    $("#p-contact").textContent = FIXED_CONTACT;
     $("#p-title").textContent = state.title || "　";
 
     $("#p-date-lunar").textContent = state.lunarDate || "";
@@ -432,7 +434,6 @@
       "f-solar",
       "f-weekday",
       "f-time",
-      "f-address",
       "f-footer",
     ].forEach((id) => {
       $(`#${id}`).addEventListener("input", updatePreview);

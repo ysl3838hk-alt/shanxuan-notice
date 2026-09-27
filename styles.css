@@ -285,6 +285,7 @@ button.danger-ghost:hover { background: #fff5f5; }
   box-shadow: 0 2px 12px rgba(0,0,0,.15);
   position: relative;
   overflow: hidden;
+  overflow-x: clip;
   line-height: 1.15;
 }
 
@@ -301,7 +302,7 @@ button.danger-ghost:hover { background: #fff5f5; }
 .notice-header .logo {
   height: 27mm;
   width: auto;
-  max-width: 70mm;
+  max-width: 58mm;
   object-fit: contain;
   flex-shrink: 0;
   display: block;
@@ -309,12 +310,25 @@ button.danger-ghost:hover { background: #fff5f5; }
 
 .notice-header .contact {
   font-family: var(--cjk);
-  font-size: 12.7pt;
+  font-size: 11pt;
   line-height: 1.35;
   color: #111;
   flex: 1;
-  white-space: nowrap;
+  min-width: 0;
+  white-space: normal;
+  word-break: break-word;
   padding-bottom: 1mm;
+}
+
+.fixed-contact {
+  margin: 0;
+  padding: 8px 10px;
+  background: #f7f5f2;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  font-size: 0.88rem;
+  color: #333;
+  line-height: 1.4;
 }
 
 .notice-title {
