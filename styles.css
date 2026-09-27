@@ -307,6 +307,8 @@ button.danger-ghost:hover { background: #fff5f5; }
   object-fit: contain;
   flex-shrink: 0;
   display: block;
+  transform: scaleX(1.08);
+  transform-origin: left bottom;
 }
 
 .notice-header .contact {
@@ -341,7 +343,7 @@ button.danger-ghost:hover { background: #fff5f5; }
   /* 標楷體粗黑 — 700 + synthetic stroke (Kai often has no bold face) */
   text-align: center;
   font-family: var(--kai);
-  font-size: 25.2pt;
+  font-size: 27.7pt;
   font-weight: 700;
   color: #000;
   letter-spacing: 0;
