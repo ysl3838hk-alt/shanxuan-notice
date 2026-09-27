@@ -314,7 +314,7 @@ button.danger-ghost:hover { background: #fff5f5; }
 
 .notice-header .contact {
   font-family: var(--kai);
-  font-size: 9.2pt; /* +15% from 8pt */
+  font-size: 10.6pt; /* 9.2pt +15% */ /* +15% from 8pt */
   font-weight: 700;
   line-height: 1.2;
   color: #111;
