@@ -299,7 +299,7 @@ button.danger-ghost:hover { background: #fff5f5; }
 }
 
 .notice-header .logo {
-  height: 23mm;
+  height: 17mm;
   width: auto;
   max-width: 44mm; /* room for full Kai contact+phone one line */
   object-position: left bottom;
@@ -326,7 +326,7 @@ button.danger-ghost:hover { background: #fff5f5; }
   padding-top: 0;
   margin-bottom: 1.5mm;
   -webkit-text-stroke: 0.25px #000;
-  margin-left: 10em; /* 兩個字距離 */
+  margin-left: 15em; /* 兩個字距離 */
 }
 
 .fixed-contact {
