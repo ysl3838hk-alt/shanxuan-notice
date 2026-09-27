@@ -291,8 +291,8 @@ button.danger-ghost:hover { background: #fff5f5; }
 
 .notice-header {
   display: flex;
-  align-items: flex-end;
-  gap: 3mm;
+  align-items: flex-end; /* sample: contact baseline with logo/calligraphy bottom */
+  gap: 2.5mm;
   /* logo bottom ~107pt, title top ~133pt → ~9mm gap after header */
   margin-bottom: 8.5mm;
   /* pull logo toward sample left (5.78mm) vs content pad 11.57mm */
@@ -302,22 +302,23 @@ button.danger-ghost:hover { background: #fff5f5; }
 .notice-header .logo {
   height: 27mm;
   width: auto;
-  max-width: 58mm;
+  max-width: 52mm; /* slightly tighter so 12.7pt contact+phone fits one line */
   object-fit: contain;
   flex-shrink: 0;
   display: block;
 }
 
 .notice-header .contact {
+  /* sample-v2: DFBiaoKaiShu @19/1.5≈12.7pt; visual/original use Hei (cjk) */
   font-family: var(--cjk);
-  font-size: 11pt;
-  line-height: 1.35;
+  font-size: 12.7pt;
+  line-height: 1.2;
   color: #111;
   flex: 1;
   min-width: 0;
-  white-space: normal;
-  word-break: break-word;
-  padding-bottom: 1mm;
+  white-space: nowrap; /* sample is one line incl. 電話 */
+  overflow: visible;
+  padding-bottom: 0; /* baseline with logo/calligraphy (flex-end) */
 }
 
 .fixed-contact {
@@ -332,12 +333,11 @@ button.danger-ghost:hover { background: #fff5f5; }
 }
 
 .notice-title {
+  /* sample-v2: same Kai as roles @37/1.5≈25.2pt, normal weight; underline stands out */
   text-align: center;
-  font-family: "Arial Black", "Helvetica Neue", "Noto Sans CJK TC",
-               "Microsoft JhengHei", "PingFang TC", "Source Han Sans TC",
-               sans-serif;
-  font-size: 31pt;
-  font-weight: 900;
+  font-family: var(--kai);
+  font-size: 25.2pt;
+  font-weight: normal;
   color: #000;
   letter-spacing: 0;
   line-height: 1.05;
@@ -457,10 +457,12 @@ button.danger-ghost:hover { background: #fff5f5; }
 }
 
 .sub-list {
+  /* sample: sub names font1 @27/1.5=18pt */
   margin: 0;
   padding: 0.2mm 0 0;
   list-style: none;
-  font-size: 16pt;
+  font-size: 18pt;
+  font-family: var(--kai);
   line-height: 1.15;
 }
 
@@ -470,18 +472,20 @@ button.danger-ghost:hover { background: #fff5f5; }
 }
 
 .sub-list .sub-num {
+  /* sample: sub nums font3 @21/1.5=14pt */
   display: inline-block;
   min-width: 1.1em;
   margin-right: 0.25em;
-  font-size: 14.4pt;
+  font-size: 14pt;
 }
 
 .notice-footer {
+  /* sample: Kai red @21/1.5=14pt */
   margin-top: 4mm;
   text-align: center;
   color: #c41e3a;
-  font-family: var(--cjk);
-  font-size: 11pt;
+  font-family: var(--kai);
+  font-size: 14pt;
   letter-spacing: 0.02em;
   line-height: 1.3;
 }
