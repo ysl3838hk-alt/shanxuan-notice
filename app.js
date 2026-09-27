@@ -347,7 +347,7 @@
       syncStaffFromDom();
     }
 
-    $("#p-contact").innerHTML = FIXED_CONTACT_ADDR + "<br>" + FIXED_CONTACT_PHONE;
+    $("#p-contact").textContent = FIXED_CONTACT;
     $("#p-title").textContent = state.title || "　";
 
     $("#p-date-lunar").textContent = state.lunarDate || "";
