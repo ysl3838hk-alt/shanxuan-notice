@@ -323,6 +323,7 @@ position: relative;
   margin: 0;
   padding: 0;
   -webkit-text-stroke: 0.25px #000;
+  margin-left: 4%;
 }: 4em; /* 兩個字距離 */
 }
 
