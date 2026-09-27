@@ -53,6 +53,127 @@
     return JSON.parse(JSON.stringify(SAMPLE));
   }
 
+  const STORAGE_KEY = "shanxuan-notice-state-v1";
+
+  function emptyDefaults() {
+    return {
+      title: "",
+      lunarDate: "",
+      solarDate: "",
+      weekday: "",
+      time: "",
+      pickDate: "",
+      address: FIXED_CONTACT,
+      footer: "*工作人員必須於儀式開始前30分鐘到達預備",
+      staff: SAMPLE.staff.map((row) => {
+        if (row.type === "slots") {
+          return { role: row.role, type: "slots", slots: ["", ""] };
+        }
+        return { role: row.role, type: row.type || "single", names: "" };
+      }),
+    };
+  }
+
+  function isValidStaff(staff) {
+    if (!Array.isArray(staff) || staff.length !== SAMPLE.staff.length) return false;
+    for (let i = 0; i < SAMPLE.staff.length; i++) {
+      const expected = SAMPLE.staff[i];
+      const row = staff[i];
+      if (!row || typeof row !== "object") return false;
+      if (row.role !== expected.role) return false;
+      if ((row.type || "single") !== expected.type) return false;
+      if (expected.type === "slots") {
+        if (!Array.isArray(row.slots)) return false;
+      } else if (typeof row.names !== "string" && row.names != null) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function loadSavedState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      const data = JSON.parse(raw);
+      if (!data || typeof data !== "object") return null;
+      if (!isValidStaff(data.staff)) return null;
+      return {
+        title: typeof data.title === "string" ? data.title : "",
+        lunarDate: typeof data.lunarDate === "string" ? data.lunarDate : "",
+        solarDate: typeof data.solarDate === "string" ? data.solarDate : "",
+        weekday: typeof data.weekday === "string" ? data.weekday : "",
+        time: typeof data.time === "string" ? data.time : "",
+        pickDate: typeof data.pickDate === "string" ? data.pickDate : "",
+        address: FIXED_CONTACT,
+        footer: typeof data.footer === "string" ? data.footer : "",
+        staff: data.staff.map((row, i) => {
+          const expected = SAMPLE.staff[i];
+          if (expected.type === "slots") {
+            const slots = Array.isArray(row.slots) ? row.slots.slice(0, 2) : ["", ""];
+            while (slots.length < 2) slots.push("");
+            return {
+              role: expected.role,
+              type: "slots",
+              slots: slots.map((s) => String(s || "")),
+            };
+          }
+          return {
+            role: expected.role,
+            type: expected.type || "single",
+            names: typeof row.names === "string" ? row.names : "",
+          };
+        }),
+      };
+    } catch (e) {
+      console.warn("Failed to load saved notice", e);
+      return null;
+    }
+  }
+
+  function persistState() {
+    try {
+      readFormBasics();
+      if ($("#staff-list") && $("#staff-list").children.length) {
+        syncStaffFromDom();
+      }
+      const payload = {
+        title: state.title || "",
+        lunarDate: state.lunarDate || "",
+        solarDate: state.solarDate || "",
+        weekday: state.weekday || "",
+        time: state.time || "",
+        pickDate: state.pickDate || "",
+        address: FIXED_CONTACT,
+        footer: state.footer || "",
+        staff: state.staff.map((row) => {
+          if (row.type === "slots") {
+            const slots = (row.slots || ["", ""]).slice(0, 2);
+            while (slots.length < 2) slots.push("");
+            return { role: row.role, type: "slots", slots: slots };
+          }
+          return {
+            role: row.role,
+            type: row.type || "single",
+            names: row.names || "",
+          };
+        }),
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch (e) {
+      console.warn("Failed to save notice", e);
+    }
+  }
+
+  let saveTimer = null;
+  function scheduleSave() {
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () {
+      saveTimer = null;
+      persistState();
+    }, 300);
+  }
+
   function escapeHtml(s) {
     return String(s)
       .replace(/&/g, "&amp;")
@@ -285,6 +406,7 @@
     state = cloneSample();
     bindForm();
     updatePreview();
+    persistState();
   }
 
   function suggestedFilename() {
@@ -297,6 +419,7 @@
     readFormBasics();
     syncStaffFromDom();
     updatePreview();
+    persistState();
 
     const page = document.getElementById("notice-page");
     if (!page) return;
@@ -424,9 +547,14 @@
 
 
   function init() {
-    state = cloneSample();
+    state = loadSavedState() || emptyDefaults();
     bindForm();
     updatePreview();
+
+    const onFieldInput = function () {
+      updatePreview();
+      scheduleSave();
+    };
 
     [
       "f-title",
@@ -436,22 +564,29 @@
       "f-time",
       "f-footer",
     ].forEach((id) => {
-      $(`#${id}`).addEventListener("input", updatePreview);
+      $(`#${id}`).addEventListener("input", onFieldInput);
     });
 
     $("#f-pick-date").addEventListener("change", (e) => {
       applyPickDate(e.target.value);
+      scheduleSave();
     });
     $("#f-pick-date").addEventListener("input", (e) => {
       if (e.target.value) applyPickDate(e.target.value);
+      scheduleSave();
     });
 
-    $("#staff-list").addEventListener("input", onStaffChange);
+    $("#staff-list").addEventListener("input", (e) => {
+      onStaffChange(e);
+      scheduleSave();
+    });
 
     $("#btn-load-sample").addEventListener("click", () => {
       if (confirm("載入樣本會覆蓋目前內容，確定？")) loadSample();
     });
     $("#btn-export").addEventListener("click", exportPdf);
+
+    window.addEventListener("beforeunload", persistState);
   }
 
   document.addEventListener("DOMContentLoaded", init);
