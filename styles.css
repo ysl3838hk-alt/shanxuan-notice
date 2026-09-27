@@ -290,7 +290,7 @@ button.danger-ghost:hover { background: #fff5f5; }
 
 .notice-header {
   display: flex;
-  align-items: flex-start; /* sample: contact baseline with logo/calligraphy bottom */
+  align-items: flex-end; /* sample: contact baseline with logo/calligraphy bottom */
   gap: 2.5mm;
   /* logo bottom ~107pt, title top ~133pt → ~9mm gap after header */
   margin-bottom: 8.5mm;
@@ -313,17 +313,16 @@ button.danger-ghost:hover { background: #fff5f5; }
   font-family: var(--kai);
   font-size: 7.7pt;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.15;
   color: #111;
   flex: 1 1 auto;
   min-width: 0;
-  max-width: 100%;
-  white-space: nowrap;
+  white-space: nowrap !important;
   overflow: visible;
-  /* sit slightly below logo / 善玄精舍 baseline */
   align-self: flex-end;
-  margin-bottom: 0;
-  padding-top: 14mm;
+  margin-top: auto;
+  padding-top: 0;
+  margin-bottom: 1.5mm;
   -webkit-text-stroke: 0.25px #000;
 }
 
