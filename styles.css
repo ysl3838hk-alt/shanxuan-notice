@@ -291,7 +291,7 @@ button.danger-ghost:hover { background: #fff5f5; }
 .notice-header {
   display: flex;
   align-items: flex-end; /* sample: contact baseline with logo/calligraphy bottom */
-  gap: 2.5mm;
+  gap: 0;
   /* logo bottom ~107pt, title top ~133pt → ~9mm gap after header */
   margin-bottom: 8.5mm;
   /* pull logo toward sample left (5.78mm) vs content pad 11.57mm */
@@ -307,7 +307,7 @@ button.danger-ghost:hover { background: #fff5f5; }
   object-fit: contain;
   flex-shrink: 0;
   display: block;
-  transform: scaleX(1.08);
+  transform: scaleX(1.09);
   transform-origin: left bottom;
 }
 
@@ -326,6 +326,7 @@ button.danger-ghost:hover { background: #fff5f5; }
   padding-top: 0;
   margin-bottom: 1.5mm;
   -webkit-text-stroke: 0.25px #000;
+  margin-left: 2em; /* 兩個字距離 */
 }
 
 .fixed-contact {
