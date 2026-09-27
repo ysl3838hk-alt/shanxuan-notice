@@ -290,7 +290,7 @@ button.danger-ghost:hover { background: #fff5f5; }
 
 .notice-header {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 4mm;
   margin-bottom: 8.5mm;
@@ -328,6 +328,8 @@ button.danger-ghost:hover { background: #fff5f5; }
   left: auto;
   max-width: 58%;
   -webkit-text-stroke: 0.2px #000;
+  margin-top: 14mm; /* 低過標誌底邊 */
+  align-self: flex-end;
 }
 
 .fixed-contact {
