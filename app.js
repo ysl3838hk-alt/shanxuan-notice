@@ -5,8 +5,9 @@
   "use strict";
 
   /** Default SAMPLE matches sample-v2.pdf for side-by-side verification */
-  const FIXED_CONTACT =
-    "香港灣仔駱克道348-350號恒發商業大廈3字樓 電話: 2528 3368";
+  const FIXED_CONTACT_ADDR = "香港灣仔駱克道348-350號恒發商業大廈3字樓";
+  const FIXED_CONTACT_PHONE = "電話: 2528 3368";
+  const FIXED_CONTACT = FIXED_CONTACT_ADDR + " " + FIXED_CONTACT_PHONE;
 
   const SAMPLE = {
     title: "三師寶誕",
@@ -346,7 +347,7 @@
       syncStaffFromDom();
     }
 
-    $("#p-contact").textContent = FIXED_CONTACT;
+    $("#p-contact").innerHTML = FIXED_CONTACT_ADDR + "<br>" + FIXED_CONTACT_PHONE;
     $("#p-title").textContent = state.title || "　";
 
     $("#p-date-lunar").textContent = state.lunarDate || "";

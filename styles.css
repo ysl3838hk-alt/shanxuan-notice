@@ -301,7 +301,7 @@ button.danger-ghost:hover { background: #fff5f5; }
 .notice-header .logo {
   height: 27mm;
   width: auto;
-  max-width: 46mm; /* room for full Kai contact+phone one line */
+  max-width: 44mm; /* room for full Kai contact+phone one line */
   object-position: left bottom;
   background: transparent;
   object-fit: contain;
@@ -310,19 +310,18 @@ button.danger-ghost:hover { background: #fff5f5; }
 }
 
 .notice-header .contact {
-  /* 標楷體 10.5pt bold; keep full address + 電話 on one line in PDF */
   font-family: var(--kai);
-  font-size: 9pt;
+  font-size: 10pt;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.25;
   color: #111;
   flex: 1 1 auto;
   min-width: 0;
+  max-width: 100%;
   white-space: normal;
   overflow: visible;
-  
-  text-overflow: clip;
-  padding-bottom: 0;
+  word-break: keep-all;
+  -webkit-text-stroke: 0.25px #000;
 }
 
 .fixed-contact {
