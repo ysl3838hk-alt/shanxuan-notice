@@ -291,8 +291,8 @@ button.danger-ghost:hover { background: #fff5f5; }
 .notice-header {
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
-  gap: 4mm;
+  justify-content: flex-start;
+  gap: 10%;
   margin-bottom: 8.5mm;
   margin-left: calc(5.78mm - var(--page-pad-l));
   position: relative;
@@ -321,15 +321,15 @@ button.danger-ghost:hover { background: #fff5f5; }
   white-space: nowrap;
   overflow: visible;
   flex: 0 1 auto;
-  text-align: right;
+  text-align: left;
   margin: 0 0 1mm 0;
   padding: 0;
   position: static;
   left: auto;
-  max-width: 58%;
+  max-width: none;
   -webkit-text-stroke: 0.2px #000;
   margin-top: 14mm; /* 低過標誌底邊 */
-  align-self: flex-end;
+  align-self: flex-start;
 }
 
 .fixed-contact {
