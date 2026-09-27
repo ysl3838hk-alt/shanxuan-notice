@@ -307,7 +307,7 @@ button.danger-ghost:hover { background: #fff5f5; }
   object-fit: contain;
   flex-shrink: 0;
   display: block;
-  transform: scaleX(1.09);
+  transform: scaleX(1.14);
   transform-origin: left bottom;
 }
 
