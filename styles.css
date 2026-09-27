@@ -301,7 +301,7 @@ button.danger-ghost:hover { background: #fff5f5; }
 .notice-header .logo {
   height: 27mm;
   width: auto;
-  max-width: 50mm; /* room for full Kai contact+phone one line */
+  max-width: 46mm; /* room for full Kai contact+phone one line */
   object-position: left bottom;
   background: transparent;
   object-fit: contain;
@@ -318,8 +318,9 @@ button.danger-ghost:hover { background: #fff5f5; }
   color: #111;
   flex: 1 1 auto;
   min-width: 0;
-  white-space: nowrap;
+  white-space: normal;
   overflow: visible;
+  
   text-overflow: clip;
   padding-bottom: 0;
 }
