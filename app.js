@@ -341,12 +341,32 @@
     });
   }
 
+
+  /** Shrink address/phone only if it would run past the right edge (font differences on Mac/iPhone). */
+  function fitContact(root) {
+    var c = root.querySelector(".notice-header .contact");
+    var hd = root.querySelector(".notice-header");
+    if (!c || !hd) return;
+    c.style.fontSize = "";
+    var base = parseFloat(getComputedStyle(c).fontSize);
+    var safety = 14; // px (~3.7mm) kept clear at the right
+    var avail = hd.clientWidth - c.offsetLeft - safety;
+    var w = c.scrollWidth;
+    if (w > avail && avail > 0) {
+      c.style.fontSize = Math.floor(base * (avail / w) * 100) / 100 + "px";
+    }
+  }
+
   function updatePreview() {
     readFormBasics();
     if ($("#staff-list") && $("#staff-list").children.length) {
       syncStaffFromDom();
     }
-    if ($("#p-contact")) $("#p-contact").textContent = FIXED_CONTACT;
+    if ($("#p-contact")) {
+      $("#p-contact").textContent = FIXED_CONTACT;
+      var pg0 = document.getElementById("notice-page");
+      if (pg0) fitContact(pg0);
+    }
     $("#p-title").textContent = state.title || "　";
 
     $("#p-date-lunar").textContent = state.lunarDate || "";
@@ -420,6 +440,17 @@
 
   /** Align contact left with title first char using offset* (ignores preview CSS scale). */
 
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () {
+      var pg1 = document.getElementById("notice-page");
+      if (pg1) fitContact(pg1);
+    });
+  }
+  window.addEventListener("resize", function () {
+    var pg2 = document.getElementById("notice-page");
+    if (pg2) fitContact(pg2);
+  });
+
   function exportPdf() {
     readFormBasics();
     syncStaffFromDom();
@@ -453,7 +484,7 @@
       "width:210mm;min-height:297mm;height:auto;margin:0;transform:none;box-shadow:none;overflow:visible;";
     host.appendChild(clone);
     document.body.appendChild(host);
-    // sync on export clone (full-size, no preview scale) before capture
+    fitContact(clone);
 
     const h2c = window.html2canvas;
     const jspdfNS = window.jspdf;
