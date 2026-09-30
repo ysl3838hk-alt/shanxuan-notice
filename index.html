@@ -34,8 +34,11 @@
 
       <div class="field">
         <label for="f-pick-date">揀日期</label>
-        <input type="date" id="f-pick-date" />
-        <p class="hint">選擇後自動填入公曆、星期、農曆（仍可手動改）</p>
+        <div class="cal-wrap">
+          <input type="text" id="f-pick-date" readonly autocomplete="off" placeholder="撳此揀日期（新曆＋農曆）" />
+          <div class="cal-pop" id="cal-pop" hidden></div>
+        </div>
+        <p class="hint">月曆同時顯示新曆（大字）同農曆（細字）；選擇後自動填入公曆、星期、農曆（仍可手動改）</p>
       </div>
 
       <div class="field">

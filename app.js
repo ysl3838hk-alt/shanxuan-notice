@@ -241,6 +241,94 @@
     updatePreview();
   }
 
+
+  /* ---- Custom calendar: solar (big) + lunar (small) ---- */
+  var calView = null; // {y, m}
+  function lunarCellText(y, m, d) {
+    if (typeof Solar === "undefined") return "";
+    var lu = Solar.fromYmd(y, m, d).getLunar();
+    var day = lu.getDayInChinese();
+    if (day === "初一") return lu.getMonthInChinese() + "月";
+    return day;
+  }
+  function isoOf(y, m, d) {
+    return y + "-" + String(m).padStart(2, "0") + "-" + String(d).padStart(2, "0");
+  }
+  function renderCalendar() {
+    var pop = document.getElementById("cal-pop");
+    if (!pop || !calView) return;
+    var y = calView.y, m = calView.m;
+    var first = new Date(y, m - 1, 1).getDay();
+    var days = new Date(y, m, 0).getDate();
+    var sel = ($("#f-pick-date").value || "");
+    var now = new Date();
+    var todayIso = isoOf(now.getFullYear(), now.getMonth() + 1, now.getDate());
+    var h = '<div class="cal-head">' +
+      '<button type="button" class="cal-nav" data-nav="-12">«</button>' +
+      '<button type="button" class="cal-nav" data-nav="-1">‹</button>' +
+      '<span class="cal-title">' + y + "年" + m + "月</span>" +
+      '<button type="button" class="cal-nav" data-nav="1">›</button>' +
+      '<button type="button" class="cal-nav" data-nav="12">»</button></div>';
+    h += '<div class="cal-grid cal-week">' +
+      ["日","一","二","三","四","五","六"].map(function (w) { return "<span>" + w + "</span>"; }).join("") + "</div>";
+    h += '<div class="cal-grid">';
+    for (var i = 0; i < first; i++) h += "<span></span>";
+    for (var d = 1; d <= days; d++) {
+      var iso = isoOf(y, m, d);
+      var cls = "cal-day" + (iso === sel ? " is-sel" : "") + (iso === todayIso ? " is-today" : "");
+      h += '<button type="button" class="' + cls + '" data-iso="' + iso + '">' +
+        '<b>' + d + '</b><small>' + lunarCellText(y, m, d) + "</small></button>";
+    }
+    h += "</div>";
+    h += '<div class="cal-foot"><button type="button" class="cal-today" data-today="1">今日</button>' +
+      '<button type="button" class="cal-close" data-close="1">關閉</button></div>';
+    pop.innerHTML = h;
+  }
+  function openCalendar() {
+    var pop = document.getElementById("cal-pop");
+    if (!pop) return;
+    var p = parsePickDate($("#f-pick-date").value);
+    var n = new Date();
+    calView = p ? { y: p.y, m: p.m } : { y: n.getFullYear(), m: n.getMonth() + 1 };
+    renderCalendar();
+    pop.hidden = false;
+  }
+  function closeCalendar() {
+    var pop = document.getElementById("cal-pop");
+    if (pop) pop.hidden = true;
+  }
+  function pickCalendarDate(iso) {
+    $("#f-pick-date").value = iso;
+    applyPickDate(iso);
+    scheduleSave();
+    closeCalendar();
+  }
+  function initCalendar() {
+    var inp = $("#f-pick-date"), pop = document.getElementById("cal-pop");
+    if (!inp || !pop) return;
+    inp.addEventListener("click", function () { pop.hidden ? openCalendar() : closeCalendar(); });
+    pop.addEventListener("click", function (e) {
+      var t = e.target.closest("button");
+      if (!t) return;
+      if (t.dataset.nav) {
+        var k = Number(t.dataset.nav);
+        var idx = calView.y * 12 + (calView.m - 1) + k;
+        calView = { y: Math.floor(idx / 12), m: (idx % 12) + 1 };
+        renderCalendar();
+      } else if (t.dataset.iso) {
+        pickCalendarDate(t.dataset.iso);
+      } else if (t.dataset.today) {
+        var n = new Date();
+        pickCalendarDate(isoOf(n.getFullYear(), n.getMonth() + 1, n.getDate()));
+      } else if (t.dataset.close) {
+        closeCalendar();
+      }
+    });
+    document.addEventListener("click", function (e) {
+      if (!pop.hidden && !e.target.closest(".cal-wrap")) closeCalendar();
+    });
+  }
+
   function bindForm() {
     $("#f-title").value = state.title;
     $("#f-lunar").value = state.lunarDate;
@@ -604,14 +692,7 @@
       $(`#${id}`).addEventListener("input", onFieldInput);
     });
 
-    $("#f-pick-date").addEventListener("change", (e) => {
-      applyPickDate(e.target.value);
-      scheduleSave();
-    });
-    $("#f-pick-date").addEventListener("input", (e) => {
-      if (e.target.value) applyPickDate(e.target.value);
-      scheduleSave();
-    });
+    initCalendar();
 
     $("#staff-list").addEventListener("input", (e) => {
       onStaffChange(e);
