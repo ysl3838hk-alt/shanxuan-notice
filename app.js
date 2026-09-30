@@ -577,7 +577,7 @@
       .catch(function (err) {
         console.error(err);
         host.remove();
-        alert("產生 PDF 失敗，請再試一次。");
+        alert("產生 PDF 失敗，請再試一次。\n（" + (err && (err.message || err.name) || err) + "）");
       })
       .finally(finish);
   }
