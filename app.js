@@ -539,6 +539,17 @@
     if (pg2) fitContact(pg2);
   });
 
+
+  function printNotice() {
+    readFormBasics();
+    syncStaffFromDom();
+    updatePreview();
+    persistState();
+    var page = document.getElementById("notice-page");
+    if (page) fitContact(page);
+    setTimeout(function () { window.print(); }, 80);
+  }
+
   function exportPdf() {
     readFormBasics();
     syncStaffFromDom();
@@ -702,6 +713,7 @@
     $("#btn-load-sample").addEventListener("click", () => {
       if (confirm("載入樣本會覆蓋目前內容，確定？")) loadSample();
     });
+    $("#btn-print").addEventListener("click", printNotice);
     $("#btn-export").addEventListener("click", exportPdf);
 
     window.addEventListener("beforeunload", persistState);
