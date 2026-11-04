@@ -207,6 +207,21 @@
     return `${y}年${m}月${d}日`;
   }
 
+
+  function lunarMonthLabel(monthCn) {
+    // library may return 腊/冬/正 and simplified 闰; notice uses 十二月 not 臘月
+    var m = String(monthCn || "");
+    var leap = false;
+    if (m.indexOf("闰") === 0 || m.indexOf("閏") === 0) {
+      leap = true;
+      m = m.slice(1);
+    }
+    if (m === "腊" || m === "臘" || m === "冬") m = "十二";
+    else if (m === "正") m = "正";
+    var out = (leap ? "閏" : "") + m;
+    return out;
+  }
+
   function formatLunar(y, m, d) {
     if (typeof Solar === "undefined") {
       console.warn("lunar-javascript not loaded");
@@ -214,9 +229,9 @@
     }
     const lunar = Solar.fromYmd(y, m, d).getLunar();
     const ganZhi = lunar.getYearInGanZhi();
-    const month = lunar.getMonthInChinese(); // may include 闰
+    const month = lunarMonthLabel(lunar.getMonthInChinese());
     const day = lunar.getDayInChinese();
-    return `${ganZhi}年${month}月${day}日`;
+    return ganZhi + "年" + month + "月" + day + "日";
   }
 
   function parsePickDate(value) {
@@ -248,7 +263,7 @@
     if (typeof Solar === "undefined") return "";
     var lu = Solar.fromYmd(y, m, d).getLunar();
     var day = lu.getDayInChinese();
-    if (day === "初一") return lu.getMonthInChinese() + "月";
+    if (day === "初一") return lunarMonthLabel(lu.getMonthInChinese()) + "月";
     return day;
   }
   function isoOf(y, m, d) {
