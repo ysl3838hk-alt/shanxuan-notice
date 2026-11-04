@@ -306,14 +306,23 @@
   function initCalendar() {
     var inp = $("#f-pick-date"), pop = document.getElementById("cal-pop");
     if (!inp || !pop) return;
-    inp.addEventListener("click", function () { pop.hidden ? openCalendar() : closeCalendar(); });
+    // Prevent iOS/Android: after nav re-render, click target is detached → outside close misfires
+    var ignoreOutsideUntil = 0;
+    inp.addEventListener("click", function (e) {
+      e.stopPropagation();
+      pop.hidden ? openCalendar() : closeCalendar();
+    });
     pop.addEventListener("click", function (e) {
+      e.stopPropagation();
       var t = e.target.closest("button");
       if (!t) return;
       if (t.dataset.nav) {
         var k = Number(t.dataset.nav);
         var idx = calView.y * 12 + (calView.m - 1) + k;
         calView = { y: Math.floor(idx / 12), m: (idx % 12) + 1 };
+        if (calView.m < 1) { calView.y -= 1; calView.m += 12; }
+        if (calView.m > 12) { calView.y += 1; calView.m -= 12; }
+        ignoreOutsideUntil = Date.now() + 400;
         renderCalendar();
       } else if (t.dataset.iso) {
         pickCalendarDate(t.dataset.iso);
@@ -324,8 +333,14 @@
         closeCalendar();
       }
     });
+    // Also stop touch events bubbling so document outside-close does not fire mid-nav
+    pop.addEventListener("touchstart", function (e) { e.stopPropagation(); }, { passive: true });
     document.addEventListener("click", function (e) {
-      if (!pop.hidden && !e.target.closest(".cal-wrap")) closeCalendar();
+      if (pop.hidden) return;
+      if (Date.now() < ignoreOutsideUntil) return;
+      var t = e.target;
+      if (!t || !t.isConnected) return;
+      if (!t.closest(".cal-wrap")) closeCalendar();
     });
   }
 
